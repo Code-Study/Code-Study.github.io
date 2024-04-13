@@ -127,17 +127,9 @@ const config = {
                 }
             }
         },
-    ],
-
-    themes: [
-        [
-            require.resolve("@easyops-cn/docusaurus-search-local"),
-            /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
-            ({
-                hashed: true,
-                indexBlog: false,
-            }),
-        ],
+        [ require.resolve('docusaurus-lunr-search'), {
+            languages: ['en', 'ko']
+        }]
     ],
 };
 
