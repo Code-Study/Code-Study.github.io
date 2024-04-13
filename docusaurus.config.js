@@ -15,7 +15,7 @@ const config = {
     staticDirectories: ['static'],
 
     // The url for your site: <url>/<baseUrl>/
-    url: 'https://Code-Study.github.io',  // set this
+    url: 'https://code-study.github.io',  // set this
     baseUrl: '/',  // set this
 
     // (optional) GitHub pages deployment config.
@@ -40,6 +40,7 @@ const config = {
                     sidebarPath: './sidebars.js',
                     remarkPlugins: [remarkMath],
                     rehypePlugins: [rehypeKatex],
+                    routeBasePath: "/",
                 },
                 theme: {
                     customCss: './src/css/custom.scss',
