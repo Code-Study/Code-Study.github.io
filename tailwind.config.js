@@ -1,7 +1,12 @@
 module.exports = {
-    purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-    content: [],
-    darkMode: ['selector', '[data-theme="dark"]'],
+    content: [
+      "./src/**/*.{js,jsx,ts,tsx}",
+      "./public/index.html"
+    ],
+    darkMode: [
+      'selector',
+      '[data-theme="dark"]'
+    ],
     theme: {
       extend: {},
     },
