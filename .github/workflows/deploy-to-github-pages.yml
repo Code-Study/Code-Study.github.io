@@ -12,18 +12,14 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 21
-          cache: npm
-      - name: Install dependencies
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install and Build website
         run: |
-          npm install
-      - name: Build website
-        run: |
+          npm ci
           npm run build
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
