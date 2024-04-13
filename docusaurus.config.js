@@ -40,7 +40,6 @@ const config = {
                     sidebarPath: './sidebars.js',
                     remarkPlugins: [remarkMath],
                     rehypePlugins: [rehypeKatex],
-                    routeBasePath: "/",
                 },
                 theme: {
                     customCss: './src/css/custom.scss',
