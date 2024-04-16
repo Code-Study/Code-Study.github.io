@@ -6,6 +6,6 @@ sidebar_position: 0
 
 Get Codes
 
-```python
+```python showLineNumbers
 print("Hello, World!")
 ```
