@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { PaperAirplaneIcon } from '@heroicons/react/20/solid'
 
 interface InputProps {
-  prompt: string
+  prompt: string | undefined
   onSubmit: (value: string) => void
 }
 
