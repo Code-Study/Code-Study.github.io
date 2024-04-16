@@ -27,8 +27,8 @@ const config = {
     onBrokenMarkdownLinks: 'warn',
 
     i18n: {
-        defaultLocale: 'en',
-        locales: ['en'],
+        defaultLocale: 'ko',
+        locales: ['ko'],
     },
 
     presets: [
@@ -74,7 +74,7 @@ const config = {
                         label: 'Get Codes',
                     },
                     {
-                        href: 'https://github.com/Code-Study/Archive',  // set this
+                        href: 'https://github.com/Code-Study/Code',  // set this
                         label: 'GitHub',
                         position: 'right',
                     },
@@ -128,7 +128,7 @@ const config = {
             }
         },
         [ require.resolve('docusaurus-lunr-search'), {
-            languages: ['en', 'ko']
+            languages: ['ko', 'en']
         }]
     ],
 };
