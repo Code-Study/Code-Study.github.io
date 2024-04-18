@@ -16,6 +16,7 @@ function maybeStringifyChildren(children) {
   // The children is now guaranteed to be one/more plain strings
   return Array.isArray(children) ? children.join("") : children;
 }
+
 export default function CodeBlock({ children: rawChildren, ...props }) {
   const [codes, setCodes] = useState([]); // 코드를 담을 상태
   const [names, setNames] = useState([]);
@@ -87,7 +88,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
       {codes.length > 0 ? (
         <CodeEditor names={names} codes={codes} showButtons />
       ) : (
-        <></> // 코드가 로드되지 않은 경우 빈 요소를 반환하여 렌더링을 대기함
+        <CodeEditor names={["Code-Study"]} codes={["No code has been solved yet!"]} showButtons />
       )}
     </>
   );
