@@ -91,7 +91,7 @@ const config = {
                     },
                     {
                         label: 'GitHub',
-                        href: 'https://github.com/Code-Study/Archive',
+                        href: 'https://github.com/Code-Study/Code',
                     },
                 ],
                 // set this
