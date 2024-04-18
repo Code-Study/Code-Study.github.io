@@ -190,7 +190,7 @@ export default function CodeEditor(props) {
                     </Tab.List>
                     <Tab.Panels>
                         {tabs.map(({ code, setter }, index) => (
-                        <Tab.Panel>
+                        <Tab.Panel key={index}>
                             <div className="flex-1">
                             <AceEditor
                                 value={code}

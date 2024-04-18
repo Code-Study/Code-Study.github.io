@@ -9,23 +9,49 @@ import styles from './index.module.css';
 export default function Home() {
     const [codes, setCodes] = useState([]);
     const [names, setNames] = useState([]);
-    
+    const [files, setFiles] = useState([]);
+
+    const axios = require('axios');
+
     useEffect(() => {
-        fetch('https://raw.githubusercontent.com/junnei/codetree-TILs/main/240114/%EA%B7%B8%EB%9E%98%ED%94%84%20%ED%83%90%EC%83%89/graph-traversal.py')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(data => {
-                // Python 코드를 가져온 후 상태에 저장합니다.
-                setCodes(["print(1)", "print(2)", "print(3)", "print(4)"]);
-                setNames(["junnei", "junnei", "junnei", "junnei"]);
-            })
-            .catch(error => console.error('Error fetching Python code:', error));
+        setCodes(["print(1)", "print(2)", "print(3)", "print(4)"]);
+        setNames(["junnei1", "junnei2", "junnei3", "junnei4"]);
+        fetchFiles()
     }, []);
-    
+
+
+    const fetchTreeSHA = async (owner = "Code-Study", repo = "Code", branch = "main") => {
+        try {
+          const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/branches/${branch}`);
+          return response.data;
+        } catch (error) {
+          console.error('Error fetching repository contents:', error);
+          return [];
+        }
+    };
+
+    const fetchFiles = async (owner = "Code-Study", repo = "Code", branch = "main", recursive = true) => {
+        try {
+          const responseBranch = await fetchTreeSHA(owner, repo, branch)
+          const treeSHA = responseBranch["commit"]["commit"]["tree"]["sha"]
+          console.log(treeSHA)
+          const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${treeSHA}`, {
+            params: {
+                recursive: recursive ? "true" : "false"
+            }
+          });
+          const data = response.data;
+            data.tree.forEach(item => {
+            if (item.type === 'blob') {
+                setFiles(prevFiles => [...prevFiles, { type: 'file', path: item.path }]);
+            }
+          })
+        } catch (error) {
+          console.error('Error fetching repository contents:', error);
+          return [];
+        }
+    };
+
     return (
         <Layout title="Code Study">
             <main>
@@ -35,6 +61,15 @@ export default function Home() {
                     <Link className={"button button--primary"} href={"docs/intro"}>Let's Get Codes</Link>
                     <div className={styles.codeEditorWrapper}>
                         <CodeEditor names={names} codes={codes} showButtons/>
+                    </div>
+
+                    <div>
+                        <h1>Files</h1>
+                        <ul>
+                            {files.map((file, index) => (
+                            <li key={index}>{file.path}</li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
             </main>
