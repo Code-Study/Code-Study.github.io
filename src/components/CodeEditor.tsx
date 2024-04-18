@@ -138,7 +138,7 @@ export default function CodeEditor(props) {
     }
 
     return  (
-        <div className="relative mb-10 flex flex-col">
+        <div className="relative mt-5 mb-10 flex flex-col">
           <Controls
             items={[
               {

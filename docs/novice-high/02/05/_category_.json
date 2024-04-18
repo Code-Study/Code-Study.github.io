@@ -1,6 +1,6 @@
 {
-  "position": 100,
-  "label": "수도코드",
+  "position": 500,
+  "label": "Iterator",
   "collapsible": true,
   "collapsed": true
 }
