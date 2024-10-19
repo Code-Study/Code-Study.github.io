@@ -29,7 +29,6 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
         const getRepositoryContents = async (owner, repo, path = '') => {
           try {
             const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
-            console.log(path);
             return response.data;
           } catch (error) {
             console.error('Error fetching repository contents:', error);
@@ -65,7 +64,9 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
           }
         };
 
-        const pattern = /^[a-zA-Z]+-[a-zA-Z]+\/\d+\/\d+\/\d+$/;
+        // const pattern = /^[a-zA-Z]+-[a-zA-Z]+\/\d+\/\d+\/\d+$/;
+        // const pattern = /^[a-zA-Z]+-[a-zA-Z]+\/[a-zA-Z]+-\d+\/\d+-[a-zA-Z]+-[a-zA-Z]+\/\d+$/;
+        const pattern = /^(leet-code|novice-high)\/.+\/.+\/.+$/;
         if ((pattern.test(props.metastring) === true) && (props.className === "language-python")) {
           const contents = await getFilesRecursively('Code-Study', 'Code', props.metastring);
           const codePromises = contents.map(element =>
@@ -73,7 +74,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
           );
           const codeContents = await Promise.all(codePromises);
           setCodes(codeContents);
-          console.log(contents.map(elem => elem.split('/').pop().split('.')[0]));
+          //console.log(contents.map(elem => elem.split('/').pop().split('.')[0]));
           setNames(contents.map(elem => elem.split('/').pop().split('.')[0]));
         }
       } catch (error) {

@@ -34,7 +34,7 @@ export default function Home() {
         try {
           const responseBranch = await fetchTreeSHA(owner, repo, branch)
           const treeSHA = responseBranch["commit"]["commit"]["tree"]["sha"]
-          console.log(treeSHA)
+          //console.log(treeSHA)
           const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/trees/${treeSHA}`, {
             params: {
                 recursive: recursive ? "true" : "false"
