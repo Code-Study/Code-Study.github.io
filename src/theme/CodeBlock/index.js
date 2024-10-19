@@ -29,6 +29,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
         const getRepositoryContents = async (owner, repo, path = '') => {
           try {
             const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
+            console.log(path);
             return response.data;
           } catch (error) {
             console.error('Error fetching repository contents:', error);
