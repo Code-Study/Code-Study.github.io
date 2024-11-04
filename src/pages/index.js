@@ -64,7 +64,7 @@ export default function Home() {
                     </div>
 
                     <div>
-                        <h1>Files</h1>
+                        <h1>Recent Uploads</h1>
                         <ul>
                             {files.map((file, index) => (
                             <li key={index}>{file.path}</li>
