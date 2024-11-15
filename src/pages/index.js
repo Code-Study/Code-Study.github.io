@@ -10,6 +10,7 @@ export default function Home() {
     const [codes, setCodes] = useState([]);
     const [names, setNames] = useState([]);
     const [files, setFiles] = useState([]);
+    const [members, setMembers] = useState([]);
 
     const axios = require('axios');
 
@@ -17,9 +18,32 @@ export default function Home() {
         setCodes(["print(1)", "print(2)", "print(3)", "print(4)"]);
         setNames(["junnei1", "junnei2", "junnei3", "junnei4"]);
         fetchFiles()
+        fetchMembers()
     }, []);
 
+    const fetchMembers = async (org = "Code-Study", token = null) => {
+        try {
+            const options = token
+                ? {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { filter: 'all' },
+                    }
+                : {};
+            const response = await axios.get(`https://api.github.com/orgs/${org}/members`, options);
+            //console.log('Organization Members:', response.data);
 
+            const members = response.data.map((member) => ({
+                login: member.login,
+                avatar_url: member.avatar_url,
+                html_url: member.html_url,
+            }));
+            setMembers(members);
+            return members;
+        } catch (error) {
+            console.error('Error fetching organization members:', error);
+        }
+    };
+      
     const fetchTreeSHA = async (owner = "Code-Study", repo = "Code", branch = "main") => {
         try {
           const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/branches/${branch}`);
@@ -64,12 +88,15 @@ export default function Home() {
                     </div>
 
                     <div>
-                        <h1>Recent Uploads</h1>
-                        <ul>
-                            {files.map((file, index) => (
-                            <li key={index}>{file.path}</li>
+                        <h1>Members</h1>
+                        <div className={styles.memberContainer}>
+                            {members.map((member, index) => (
+                                <a href={member.html_url} key={member.login} target="_blank" rel="noopener noreferrer" className={styles.memberCard}>
+                                    <img src={member.avatar_url} alt={`${member.login}'s avatar`} className={styles.memberAvatar} />
+                                    <p className={styles.memberName}>{member.login}</p>
+                                </a>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </main>
