@@ -99,7 +99,6 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
       } else {
         const memberContents = await fetchMembers('Code-Study');
       
-        setNames(memberContents);
         const contents = memberContents.map(async member =>  {
           const contents = await getFilesRecursively(member, 'LeetCode', props.metastring);
           const codePromises = contents
@@ -108,6 +107,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
             getRepositoryFileContent(member, 'LeetCode', element)
           );
           const codeContents = await Promise.all(codePromises);
+          setNames((prevNames) => [...prevNames, ...member]);
           setCodes((prevCodes) => [...prevCodes, ...codeContents]);
         });
       }
