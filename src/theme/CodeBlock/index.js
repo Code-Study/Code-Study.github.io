@@ -98,17 +98,11 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
         setNames(contents.map(elem => elem.split('/').pop().split('.')[0]));
       } else {
         const memberContents = await fetchMembers('Code-Study');
-      
-        const contents = memberContents.map(async member =>  {
-          const contents = await getFilesRecursively(member, 'LeetCode', props.metastring);
-          const codePromises = contents
-          .filter(element => element.endsWith('.py'))
-          .map(element =>
-            getRepositoryFileContent(member, 'LeetCode', element)
-          );
-          const codeContents = await Promise.all(codePromises);
-          setNames((prevNames) => [...prevNames, ...member]);
-          setCodes((prevCodes) => [...prevCodes, ...codeContents]);
+        const fileName = props.metastring+'/'+props.metastring+'.py'
+        memberContents.map(async member =>  {
+          const contents = await getRepositoryFileContent(member, 'LeetCode', fileName);
+          setNames((prevNames) => [...prevNames, member]);
+          setCodes((prevCodes) => [...prevCodes, contents]);
         });
       }
     } catch (error) {
