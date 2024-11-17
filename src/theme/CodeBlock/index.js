@@ -101,8 +101,10 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
         const fileName = props.metastring+'/'+props.metastring+'.py'
         memberContents.map(async member =>  {
           const contents = await getRepositoryFileContent(member, 'LeetCode', fileName);
-          setNames((prevNames) => [...prevNames, member]);
-          setCodes((prevCodes) => [...prevCodes, contents]);
+          if (contents !== null) {
+            setNames((prevNames) => [...prevNames, member]);
+            setCodes((prevCodes) => [...prevCodes, contents]);
+          }
         });
       }
     } catch (error) {
