@@ -147,7 +147,6 @@ else:
     }
 
     function compare() {
-        setShowOutput(false)
         const pythonCode = `
 ${headerCode}
 import sys
