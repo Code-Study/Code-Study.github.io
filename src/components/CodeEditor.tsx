@@ -6,7 +6,7 @@ import {usePython} from "react-py";
 
 import PythonIcon from '../../static/img/python-icon.svg'
 import { Tab } from '@headlessui/react'
-import { ArrowPathIcon, PlayIcon, StopIcon } from '@heroicons/react/24/solid'
+import { ArrowPathIcon, PlayIcon, StopIcon, CogIcon } from '@heroicons/react/24/solid'
 
 import Input from './Input'
 import Controls from './Controls'
@@ -68,18 +68,47 @@ const editorOnLoad = editor => {
 
 export default function CodeEditor(props) {
     const [main, setMain] = useState(props.codes);
+    const [compareCode, setCompareCode] = useState('');
+    const [envCode, setEnvCode] = useState('');
+    const [headerCode, setHeaderCode] = useState('');
+    const [footerCode, setFooterCode] = useState('');
+    const [isDataLoaded, setIsDataLoaded] = useState(false); 
 
     useEffect(() => {
       setShowOutput(false);
       setMain(props.codes);
     }, [props.codes]);
   
+    useEffect(() => {
+      const fetchCodes = async () => {
+        try {
+          const compareCode = await fetch('/codes/python-compare').then(response => response.text());
+          const envCode = await fetch('/codes/python-env').then(response => response.text());
+          const headerCode = await fetch('/codes/python-header').then(response => response.text());
+          const footerCode = await fetch('/codes/python-footer').then(response => response.text());
+
+          if (compareCode.startsWith('<!DOCTYPE html>') || envCode.startsWith('<!DOCTYPE html>')) {
+            throw new Error('Invalid file content: Received HTML instead of Python code');
+          }
+  
+          setCompareCode(compareCode);
+          setEnvCode(envCode);
+          setHeaderCode(headerCode);
+          setFooterCode(footerCode);
+          setIsDataLoaded(true); // 데이터 로드 완료 설정
+        } catch (error) {
+          console.error('Error fetching Python codes:', error);
+        }
+      };
+      fetchCodes();
+    }, []);  
+
     const [selectedTab, setSelectedTab] = useState(0);
     
     const handleTabChange = (index) => {
       setSelectedTab(index);
     };
-  
+
     const [showOutput, setShowOutput] = useState(false)
 
     const {colorMode} = useColorMode();
@@ -97,7 +126,18 @@ export default function CodeEditor(props) {
     } = usePython();
 
     function run() {
-        runPython(main[selectedTab])
+      const pythonCode = `
+${headerCode}
+${props.compare}
+${main[selectedTab]}
+func = getattr(Solution(), func_name)
+                
+if isinstance(datas[0], tuple):
+    func(*datas[0])
+else:
+    func(datas[0])
+`
+        runPython(pythonCode)
         setShowOutput(true)
     }
 
@@ -106,9 +146,24 @@ export default function CodeEditor(props) {
         setShowOutput(false)
     }
 
-    function reset() {
+    function compare() {
         setShowOutput(false)
-        setMain(main)
+        const pythonCode = `
+${headerCode}
+import sys
+import types
+
+virtual_files = {
+  ${main.filter(code => code != 'undefined').map((code, i) => `"${props.names[i]}": '''${headerCode}\n${code}'''`).join(",\n")}
+}
+${envCode}
+${main.filter((code, i) => (code != 'undefined') || (i != selectedTab)).map((code, i) => `from ${props.names[i]} import Solution as Solution_${props.names[i]}\nsolutions.append(Solution_${props.names[i]}())`).join("\n\n")}
+${compareCode}
+${props.compare}
+${footerCode}
+`
+        runPython(pythonCode)
+        setShowOutput(true)
     }
 
     const updateArrayItem = (index: number, newValue: string) => {
@@ -150,10 +205,10 @@ export default function CodeEditor(props) {
               },
               { label: 'Stop', icon: StopIcon, onClick: stop, hidden: !isRunning },
               {
-                label: 'Reset',
-                icon: ArrowPathIcon,
-                onClick: reset,
-                disabled: isRunning
+                label: 'Compare',
+                icon: CogIcon,
+                onClick: compare,
+                disabled: isRunning || !isDataLoaded
               }
             ]}
             isAwaitingInput={isAwaitingInput}

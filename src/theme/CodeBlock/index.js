@@ -23,6 +23,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
   const [names, setNames] = useState([]);
   const [members, setMembers] = useState([]);
 
+  const children = maybeStringifyChildren(rawChildren);
   const axios = require('axios');
 
   const fetchMembers = async (org = "Code-Study") => {
@@ -101,7 +102,6 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
       console.error('Error fetching codes:', error);
     }
   };
-
   useEffect(() => {
     fetchCodes();
   }, [props.metastring]);
@@ -109,7 +109,7 @@ export default function CodeBlock({ children: rawChildren, ...props }) {
   return (
     <>
       {codes.length > 0 ? (
-        <CodeEditor names={names} codes={codes} showButtons />
+        <CodeEditor names={names} codes={codes} compare={children} showButtons />
       ) : (
         <CodeEditor names={["Code-Study"]} codes={["No code has been solved yet!"]} showButtons />
       )}
