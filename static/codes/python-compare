@@ -1,0 +1,81 @@
+import time
+import tracemalloc
+import math
+import copy
+
+def benchmark_functions(func_name, sizes, datas, iterations=5):
+    results = {}
+
+    for solution in solutions:
+        name = solution.__module__
+        results[name] = {"time": [], "memory": []}
+
+        for size, data in zip(sizes, datas):
+            # 실행 시간 및 메모리 측정
+            total_time = 0
+            total_memory = 0
+            for _ in range(iterations):
+                test_data = copy.deepcopy(data)
+                
+                # 메모리 사용량 측정 시작
+                tracemalloc.start()
+                start_time = time.time()
+                
+                # rotate 함수 실행
+                func = getattr(solution, func_name)
+                
+                if isinstance(test_data, tuple):
+                    func(*test_data)
+                else:
+                    func(test_data)
+                
+                # 실행 시간 측정 종료
+                total_time += (time.time() - start_time)
+
+                # 메모리 측정 종료
+                current, peak = tracemalloc.get_traced_memory()
+                tracemalloc.stop()
+                
+                # 피크 메모리 사용량 측정
+                total_memory += peak
+
+            avg_time = total_time / iterations
+            avg_memory = total_memory / iterations
+            results[name]["time"].append((size, avg_time))
+            results[name]["memory"].append((size, avg_memory))
+    
+    return results
+
+# Big-O 추정 함수 (외부 라이브러리 없이 구현)
+def estimate_big_o(results):
+    for name, data in results.items():
+        valid_data = [[size, time_taken] for size, time_taken in data["time"] if time_taken >= 0.001]
+
+        times = [time_taken for _, time_taken in valid_data]
+        sizes = [size for size, _ in valid_data]
+
+        # 로그 변환하여 시간과 크기의 관계를 분석
+        log_sizes = [math.log(size) for size in sizes]
+        log_times = [math.log(time) for time in times]
+
+        # 선형 회귀 계산 (단순히 기울기를 추정)
+        # 기울기 계산: (x1, y1), (x2, y2) 두 점의 기울기 = (y2 - y1) / (x2 - x1)
+        if len(log_sizes) > 1:
+            # 첫 번째와 마지막 점을 기준으로 기울기 추정
+            delta_log_size = log_sizes[-1] - log_sizes[0]
+            delta_log_time = log_times[-1] - log_times[0]
+            if delta_log_size != 0:
+                slope = delta_log_time / delta_log_size
+                print(f"{name} Big-O 추정: O(n^{slope:.2f})")
+            else:
+                print(f"{name} Big-O 추정 실패: 로그 크기 차이가 0")
+        else:
+            print(f"{name} Big-O 추정 실패: 데이터가 부족합니다.")
+
+def print_results(results):
+    print("크기별 실행 시간 및 메모리 사용량 비교")
+    for name, data in results.items():
+        print(f"\n{name} 결과:")
+        for (size, time_taken), (_, memory_used) in zip(data["time"], data["memory"]):
+            print(f"크기 {size}: 시간 {time_taken:.4f}초, 메모리 {memory_used} bytes")
+    print()

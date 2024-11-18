@@ -1,0 +1,5 @@
+benchmark_results = benchmark_functions(func_name, sizes, datas)
+
+# 결과 출력 및 Big-O 추정
+print_results(benchmark_results)
+estimate_big_o(benchmark_results)
